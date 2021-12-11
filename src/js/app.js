@@ -6,8 +6,17 @@ async function getCurrentWeatherData(lat, lon) {
   return data;
 }
 
+async function getFiveDayWeatherData(lat, lon) {
+  const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_TOKEN}`;
+  const data = await (await fetch(url)).json();
+  return data;
+}
+
 navigator.geolocation.getCurrentPosition(
   ({ coords: { latitude, longitude } }) => {
     getCurrentWeatherData(latitude, longitude);
+    getFiveDayWeatherData(latitude, longitude)
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error));
   }
 );
