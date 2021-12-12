@@ -87,11 +87,17 @@ const renderFiveDayWeatherData = (data) => {
 navigator.geolocation.getCurrentPosition(
   ({ coords: { latitude, longitude } }) => {
     getCurrentWeatherData(latitude, longitude)
-      .then((data) => console.log(data))
+      .then((data) =>
+        renderCurrentWeatherData(
+          convertKelvinToCelcius(data.main.temp),
+          data.weather[0].description,
+          data.weather[0].icon
+        )
+      )
       .catch((error) => console.log(error));
 
     getFiveDayWeatherData(latitude, longitude)
-      .then((data) => console.log(data.list))
+      .then((data) => renderFiveDayWeatherData(data.list))
       .catch((error) => console.log(error));
   }
 );
