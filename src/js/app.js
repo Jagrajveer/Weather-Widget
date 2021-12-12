@@ -12,11 +12,18 @@ async function getFiveDayWeatherData(lat, lon) {
   return data;
 }
 
+function convertKelvinToCelcius(temp) {
+  return (temp - 273.15).toFixed(0);
+}
+
 navigator.geolocation.getCurrentPosition(
   ({ coords: { latitude, longitude } }) => {
-    getCurrentWeatherData(latitude, longitude);
-    getFiveDayWeatherData(latitude, longitude)
-      .then((data) => console.log(data))
+    getCurrentWeatherData(latitude, longitude)
+      .then((data) => {
+        console.log(convertKelvinToCelcius(data.main.temp));
+      })
       .catch((error) => console.log(error));
+
+    getFiveDayWeatherData(latitude, longitude);
   }
 );
