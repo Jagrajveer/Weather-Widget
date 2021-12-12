@@ -24,6 +24,7 @@ const convertKelvinToCelcius = (temp) => {
   return (temp - 273.15).toFixed(0);
 };
 
+// function to render current weather data
 const renderCurrentWeatherData = (temperature, weather, icon) => {
   CurrentConditionElement.innerHTML = `
     <h2>Current Conditions</h2>
@@ -35,6 +36,53 @@ const renderCurrentWeatherData = (temperature, weather, icon) => {
   `;
 };
 
+const weekday = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+// function to render five day weather data
+const renderFiveDayWeatherData = (data) => {
+  for (let i = 0; i < 40; i = i + 8) {
+    let maxTemp = data
+      .slice(i, i + 8)
+      .map((item) => item.main.temp_max)
+      .sort();
+
+    let minTemp = data
+      .slice(i, i + 8)
+      .map((item) => item.main.temp_min)
+      .sort();
+
+    let day = weekday[new Date(data[i].dt_txt).getDay()];
+
+    ForecastElement.insertAdjacentHTML(
+      "beforeend",
+      `
+      <div class="day">
+      <h3>${day}</h3>
+      <img src="http://openweathermap.org/img/wn/${
+        data[i + 2].weather[0].icon
+      }@2x.png" />
+      <div class="description">${data[i + 2].weather[0].description}</div>
+      <div class="temp">
+        <span class="high">${convertKelvinToCelcius(
+          maxTemp[maxTemp.length - 1]
+        )}℃</span>/<span class="low">${convertKelvinToCelcius(
+        minTemp[0]
+      )}℃</span>
+      </div>
+      </div>
+    `
+    );
+  }
+};
+
 // Get coordinates of user's current location
 navigator.geolocation.getCurrentPosition(
   ({ coords: { latitude, longitude } }) => {
@@ -42,6 +90,8 @@ navigator.geolocation.getCurrentPosition(
       .then((data) => console.log(data))
       .catch((error) => console.log(error));
 
-    getFiveDayWeatherData(latitude, longitude);
+    getFiveDayWeatherData(latitude, longitude)
+      .then((data) => console.log(data.list))
+      .catch((error) => console.log(error));
   }
 );
